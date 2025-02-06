@@ -1,0 +1,51 @@
+[
+    {
+        "title": "My First Post",
+        "date": "2025-01-27",
+        "readingTime": 5,
+        "excerpt": "A brief introduction to my first blog post...",
+        "filename": "first-post.md"
+    },
+    {
+        "title": "Another Post",
+        "date": "2025-01-25",
+        "readingTime": 3,
+        "excerpt": "Quick thoughts on programming...",
+        "filename": "first-post.md"
+    },
+    {
+        "title": "Another Post",
+        "date": "2025-01-25",
+        "readingTime": 3,
+        "excerpt": "Quick thoughts on programming...",
+        "filename": "first-post.md"
+    },
+    {
+        "title": "Another Post",
+        "date": "2025-01-25",
+        "readingTime": 3,
+        "excerpt": "Quick thoughts on programming...",
+        "filename": "first-post.md"
+    },
+    {
+        "title": "Another Post",
+        "date": "2025-01-25",
+        "readingTime": 3,
+        "excerpt": "Quick thoughts on programming...",
+        "filename": "first-post.md"
+    },
+    {   
+        "title": "Another Post",
+        "date": "2025-01-25",
+        "readingTime": 3,
+        "excerpt": "Quick thoughts on programming...",
+        "filename": "first-post.md"
+    },
+    {
+        "title": "Another Post",
+        "date": "2025-01-25",
+        "readingTime": 3,
+        "excerpt": "Quick thoughts on programming...",
+        "filename": "first-post.md"
+    }
+]
