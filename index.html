@@ -6,22 +6,22 @@
     <title>My Personal Website</title>
     <link rel="stylesheet" href="css/style.css">
     <!-- Marked.js for Markdown parsing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
     <script src="js/main.js" defer></script>
 </head>
 <body>
     <header>
-        <h1>eltonsst</h1>
+        <h1 class="fade-in">eltonsst</h1>
         <nav>
-            <a href="#" data-page="posts">Posts</a>
-            <a href="#" data-page="about">About</a>
-            <a href="#" data-page="contact">Contact</a>
+            <a href="#" data-page="posts" class="nav-link">Posts</a>
+            <a href="#" data-page="about" class="nav-link">About</a>
+            <a href="#" data-page="contact" class="nav-link">Contact</a>
         </nav>
     </header>
 
     <main id="content">
-        <div id="posts-list"></div>
-        <div id="post-content"></div>
+        <div id="posts-list" class="fade-in"></div>
+        <div id="post-content" class="fade-in"></div>
     </main>
 
 </body>

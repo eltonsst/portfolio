@@ -6,32 +6,11 @@ const config = {
     pagesDirectory: 'pages/'
 };
 
-function debugElementCheck() {
-    const elementsToCheck = [
-        'posts-list',
-        'post-content', 
-        'content'
-    ];
-
-    console.log('--- Element Debugging ---');
-    elementsToCheck.forEach(id => {
-        const element = document.getElementById(id);
-        console.log(`${id}:`, {
-            found: !!element,
-            element: element,
-            parentElement: element ? element.parentElement : null
-        });
-    });
-    console.log('Document ready state:', document.readyState);
-    console.log('--- End of Element Debugging ---');
-}
-
 async function init() {
     console.log('Initializing application...');
-    debugElementCheck();
     setupNavigation();
     const hash = window.location.hash.slice(1);
-    
+
     if (hash.startsWith('post/')) {
         await loadPost(hash.replace('post/', ''));
     } else if (hash === 'posts') {
@@ -49,123 +28,149 @@ function setupNavigation() {
         link.addEventListener('click', async (e) => {
             e.preventDefault();
             const page = e.target.dataset.page;
-            if (page === 'posts') {
-                await loadPostsList();
-                history.pushState({}, '', '#posts');
-            } else {
-                await loadPage(page);
-                history.pushState({}, '', `#${page}`);
-            }
+
+            // Add fade-out effect
+            document.getElementById('content').style.opacity = '0';
+
+            setTimeout(async () => {
+                if (page === 'posts') {
+                    await loadPostsList();
+                    history.pushState({}, '', '#posts');
+                } else {
+                    await loadPage(page);
+                    history.pushState({}, '', `#${page}`);
+                }
+                // Fade back in
+                document.getElementById('content').style.opacity = '1';
+            }, 300);
         });
     });
 
-    // Handle hash change for deep linking
     window.addEventListener('hashchange', async () => {
         const hash = window.location.hash.slice(1);
-        if (hash.startsWith('post/')) {
-            await loadPost(hash.replace('post/', ''));
-        } else if (hash === 'posts') {
-            await loadPostsList();
-        } else if (['about', 'contact'].includes(hash)) {
-            await loadPage(hash);
-        }
+
+        // Add fade-out effect
+        document.getElementById('content').style.opacity = '0';
+
+        setTimeout(async () => {
+            if (hash.startsWith('post/')) {
+                await loadPost(hash.replace('post/', ''));
+            } else if (hash === 'posts') {
+                await loadPostsList();
+            } else if (['about', 'contact'].includes(hash)) {
+                await loadPage(hash);
+            }
+            // Fade back in
+            document.getElementById('content').style.opacity = '1';
+        }, 300);
     });
 }
 
 function createPostPreview(markdown) {
     const plainText = markdown
-        .replace(/#+\s+.*\n/g, '')  // Remove headers
-        .replace(/```[\s\S]*?```/g, '') // Remove code blocks
-        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1') // Convert links to text
-        .replace(/[*_`](.+?)[*_`]/g, '$1'); // Remove emphasis markers
-    
-    return plainText.trim().slice(0, config.previewLength) + 
-           (plainText.length > config.previewLength ? '...' : '');
+        .replace(/#+\s+.*\n/g, '')
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+        .replace(/[*_`](.+?)[*_`]/g, '$1');
+
+    return plainText.trim().slice(0, config.previewLength) +
+        (plainText.length > config.previewLength ? '...' : '');
 }
 
 async function loadPostsList() {
-    const postsList = document.getElementById('posts-list') || createElement('posts-list');
-    const postContent = document.getElementById('post-content') || createElement('post-content');
-
-    console.log('Loading posts list - Element check:', {
-        'posts-list': !!postsList,
-        'post-content': !!postContent
-    });
+    const postsList = document.getElementById('posts-list');
+    const postContent = document.getElementById('post-content');
 
     try {
         const response = await fetch(config.postsListFile);
         const posts = await response.json();
-        
-        postsList.innerHTML = ''; 
-        postContent.innerHTML = ''; 
-        
-        for (const post of posts) {
+
+        postsList.innerHTML = '';
+        postContent.innerHTML = '';
+
+        posts.forEach(async (post, index) => {
             const postContentResponse = await fetch(`${config.postsDirectory}${post.filename}`);
             const postContentText = await postContentResponse.text();
             const preview = createPostPreview(postContentText);
-            
+
             const postElement = document.createElement('article');
             postElement.className = 'post-entry';
+            postElement.style.setProperty('--animation-order', index);
             postElement.innerHTML = `
                 <a href="#post/${post.filename}" class="post-title">${post.title}</a>
                 <div class="post-meta">${post.date} • ${post.readingTime} min read</div>
                 <div class="post-preview">${preview}</div>
             `;
-            
+
             postsList.appendChild(postElement);
             postElement.querySelector('.post-title').addEventListener('click', (e) => {
                 e.preventDefault();
                 loadPost(post.filename);
             });
-        }
+        });
     } catch (error) {
         console.error('Error loading posts:', error);
-        postsList.innerHTML = 'Error loading posts: ' + error.message;
+        postsList.innerHTML = `
+            <div class="error-message fade-in">
+                Unable to load posts. Please try again later.
+            </div>`;
     }
 }
 
 async function loadPost(filename) {
-    const postsList = document.getElementById('posts-list') || createElement('posts-list');
-    const postContent = document.getElementById('post-content') || createElement('post-content');
-    
+    const postsList = document.getElementById('posts-list');
+    const postContent = document.getElementById('post-content');
+
     try {
-        postsList.innerHTML = ''; // Clear posts list when loading a specific post
+        postsList.innerHTML = '';
+        postContent.innerHTML = '<div class="loading fade-in">Loading...</div>';
+
         const response = await fetch(`${config.postsDirectory}${filename}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
         const markdown = await response.text();
         postContent.innerHTML = marked.parse(markdown);
     } catch (error) {
         console.error('Error loading post:', error);
-        postContent.innerHTML = 'Error loading post: ' + error.message;
+        postContent.innerHTML = `
+            <div class="error-message fade-in">
+                Unable to load post. Please try again later.
+            </div>`;
     }
 }
 
 async function loadPage(pageName) {
-    const postsList = document.getElementById('posts-list') || createElement('posts-list');
-    const postContent = document.getElementById('post-content') || createElement('post-content');
+    const postsList = document.getElementById('posts-list');
+    const postContent = document.getElementById('post-content');
 
     try {
-        postsList.innerHTML = ''; // Clear posts list
+        postsList.innerHTML = '';
+        postContent.innerHTML = '<div class="loading fade-in">Loading...</div>';
+
         const response = await fetch(`${config.pagesDirectory}${pageName}.html`);
+        if (!response.ok) throw new Error('Page not found');
+
         const pageContent = await response.text();
         postContent.innerHTML = pageContent;
     } catch (error) {
         console.error(`Error loading ${pageName} page:`, error);
-        postContent.innerHTML = `Error loading ${pageName} page: ${error.message}`;
+        postContent.innerHTML = `
+            <div class="not-found fade-in">
+                <h2>Page Not Found</h2>
+                <p>The page you're looking for doesn't exist.</p>
+                <a href="#posts">Return to Posts</a>
+            </div>`;
     }
 }
 
-function createElement(id) {
-    let el = document.getElementById(id);
-    if (!el) {
-        el = document.createElement('div');
-        el.id = id;
-        document.getElementById('content').appendChild(el);
-    }
-    return el;
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+        .then(function (registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(function (error) {
+            console.log('Service Worker registration failed:', error);
+        });
 }
 
 document.addEventListener('DOMContentLoaded', init);
-window.addEventListener('load', () => {
-    console.log('Window load event triggered');
-    debugElementCheck();
-});
