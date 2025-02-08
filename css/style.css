@@ -213,9 +213,9 @@ nav {
     animation: fadeIn 0.5s ease forwards;
 }
 
-.fade-in {
+.fade-in {    
     opacity: 0;
-    animation: fadeIn 0.5s ease forwards;
+    animation: fadeIn 0.3s ease forwards;
 }
 
 /* Responsive adjustments */
@@ -232,4 +232,20 @@ nav {
     .post-title {
         font-size: 1.8rem;
     }
+}
+
+.site-title {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    transition: opacity 0.3s ease;
+}
+
+.site-title:hover {
+    opacity: 0.8;
+}
+
+/* This ensures the h1 within the link maintains its styles */
+.site-title h1 {
+    margin-bottom: 1.4rem;
 }

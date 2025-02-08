@@ -6,64 +6,88 @@ const config = {
     pagesDirectory: 'pages/'
 };
 
+// Cache for posts content
+const postsCache = new Map();
+
 async function init() {
     console.log('Initializing application...');
     setupNavigation();
+    
+    // Preload posts data
+    prefetchPosts();
+    
     const hash = window.location.hash.slice(1);
-
-    if (hash.startsWith('post/')) {
-        await loadPost(hash.replace('post/', ''));
-    } else if (hash === 'posts') {
-        await loadPostsList();
-    } else if (['about', 'contact'].includes(hash)) {
-        await loadPage(hash);
-    } else {
-        await loadPostsList(); // Default to posts list
-    }
+    await handleNavigation(hash);
 }
 
 function setupNavigation() {
     console.log('Setting up navigation...');
+    
+    document.querySelector('.site-title').addEventListener('click', async (e) => {
+        e.preventDefault();
+        await handleNavigation('posts'); // 'posts' is treated as home page
+    });
+
     document.querySelectorAll('nav a').forEach(link => {
         link.addEventListener('click', async (e) => {
             e.preventDefault();
             const page = e.target.dataset.page;
-
-            // Add fade-out effect
-            document.getElementById('content').style.opacity = '0';
-
-            setTimeout(async () => {
-                if (page === 'posts') {
-                    await loadPostsList();
-                    history.pushState({}, '', '#posts');
-                } else {
-                    await loadPage(page);
-                    history.pushState({}, '', `#${page}`);
-                }
-                // Fade back in
-                document.getElementById('content').style.opacity = '1';
-            }, 300);
+            await handleNavigation(page);
         });
     });
 
     window.addEventListener('hashchange', async () => {
         const hash = window.location.hash.slice(1);
-
-        // Add fade-out effect
-        document.getElementById('content').style.opacity = '0';
-
-        setTimeout(async () => {
-            if (hash.startsWith('post/')) {
-                await loadPost(hash.replace('post/', ''));
-            } else if (hash === 'posts') {
-                await loadPostsList();
-            } else if (['about', 'contact'].includes(hash)) {
-                await loadPage(hash);
-            }
-            // Fade back in
-            document.getElementById('content').style.opacity = '1';
-        }, 300);
+        await handleNavigation(hash);
     });
+}
+
+async function handleNavigation(route) {
+    const content = document.getElementById('content');
+    content.classList.remove('fade-in');
+    
+    // Use requestAnimationFrame for smooth transitions
+    requestAnimationFrame(async () => {
+        if (route.startsWith('post/')) {
+            await loadPost(route.replace('post/', ''));
+            history.pushState({}, '', `#${route}`);
+        } else if (route === 'posts' || route === '') {
+            await loadPostsList();
+            history.pushState({}, '', '#posts');
+        } else if (['about', 'contact'].includes(route)) {
+            await loadPage(route);
+            history.pushState({}, '', `#${route}`);
+        }
+        
+        // Trigger reflow to ensure animation plays
+        content.offsetHeight;
+        content.classList.add('fade-in');
+    });
+}
+
+// Preload posts data
+async function prefetchPosts() {
+    try {
+        const response = await fetch(config.postsListFile);
+        const posts = await response.json();
+        
+        // Fetch all posts in parallel
+        const fetchPromises = posts.map(post => 
+            fetch(`${config.postsDirectory}${post.filename}`)
+                .then(res => res.text())
+                .then(content => {
+                    postsCache.set(post.filename, {
+                        content,
+                        preview: createPostPreview(content)
+                    });
+                })
+        );
+        
+        // Wait for all fetches to complete
+        await Promise.all(fetchPromises);
+    } catch (error) {
+        console.error('Error prefetching posts:', error);
+    }
 }
 
 function createPostPreview(markdown) {
@@ -88,10 +112,9 @@ async function loadPostsList() {
         postsList.innerHTML = '';
         postContent.innerHTML = '';
 
-        posts.forEach(async (post, index) => {
-            const postContentResponse = await fetch(`${config.postsDirectory}${post.filename}`);
-            const postContentText = await postContentResponse.text();
-            const preview = createPostPreview(postContentText);
+        posts.forEach((post, index) => {
+            const cachedPost = postsCache.get(post.filename);
+            const preview = cachedPost ? cachedPost.preview : 'Loading preview...';
 
             const postElement = document.createElement('article');
             postElement.className = 'post-entry';
@@ -103,10 +126,6 @@ async function loadPostsList() {
             `;
 
             postsList.appendChild(postElement);
-            postElement.querySelector('.post-title').addEventListener('click', (e) => {
-                e.preventDefault();
-                loadPost(post.filename);
-            });
         });
     } catch (error) {
         console.error('Error loading posts:', error);
@@ -125,11 +144,16 @@ async function loadPost(filename) {
         postsList.innerHTML = '';
         postContent.innerHTML = '<div class="loading fade-in">Loading...</div>';
 
-        const response = await fetch(`${config.postsDirectory}${filename}`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        let content;
+        if (postsCache.has(filename)) {
+            content = postsCache.get(filename).content;
+        } else {
+            const response = await fetch(`${config.postsDirectory}${filename}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            content = await response.text();
+        }
 
-        const markdown = await response.text();
-        postContent.innerHTML = marked.parse(markdown);
+        postContent.innerHTML = marked.parse(content);
     } catch (error) {
         console.error('Error loading post:', error);
         postContent.innerHTML = `
@@ -165,10 +189,10 @@ async function loadPage(pageName) {
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js')
-        .then(function (registration) {
+        .then(registration => {
             console.log('Service Worker registered with scope:', registration.scope);
         })
-        .catch(function (error) {
+        .catch(error => {
             console.log('Service Worker registration failed:', error);
         });
 }
