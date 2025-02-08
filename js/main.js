@@ -6,15 +6,9 @@ const config = {
     pagesDirectory: 'pages/'
 };
 
-// Cache for posts content
-const postsCache = new Map();
-
 async function init() {
     console.log('Initializing application...');
     setupNavigation();
-    
-    // Preload posts data
-    prefetchPosts();
     
     const hash = window.location.hash.slice(1);
     await handleNavigation(hash);
@@ -22,10 +16,10 @@ async function init() {
 
 function setupNavigation() {
     console.log('Setting up navigation...');
-    
+
     document.querySelector('.site-title').addEventListener('click', async (e) => {
         e.preventDefault();
-        await handleNavigation('posts'); // 'posts' is treated as home page
+        await handleNavigation('posts');
     });
 
     document.querySelectorAll('nav a').forEach(link => {
@@ -46,7 +40,6 @@ async function handleNavigation(route) {
     const content = document.getElementById('content');
     content.classList.remove('fade-in');
     
-    // Use requestAnimationFrame for smooth transitions
     requestAnimationFrame(async () => {
         if (route.startsWith('post/')) {
             await loadPost(route.replace('post/', ''));
@@ -59,35 +52,9 @@ async function handleNavigation(route) {
             history.pushState({}, '', `#${route}`);
         }
         
-        // Trigger reflow to ensure animation plays
         content.offsetHeight;
         content.classList.add('fade-in');
     });
-}
-
-// Preload posts data
-async function prefetchPosts() {
-    try {
-        const response = await fetch(config.postsListFile);
-        const posts = await response.json();
-        
-        // Fetch all posts in parallel
-        const fetchPromises = posts.map(post => 
-            fetch(`${config.postsDirectory}${post.filename}`)
-                .then(res => res.text())
-                .then(content => {
-                    postsCache.set(post.filename, {
-                        content,
-                        preview: createPostPreview(content)
-                    });
-                })
-        );
-        
-        // Wait for all fetches to complete
-        await Promise.all(fetchPromises);
-    } catch (error) {
-        console.error('Error prefetching posts:', error);
-    }
 }
 
 function createPostPreview(markdown) {
@@ -112,9 +79,11 @@ async function loadPostsList() {
         postsList.innerHTML = '';
         postContent.innerHTML = '';
 
-        posts.forEach((post, index) => {
-            const cachedPost = postsCache.get(post.filename);
-            const preview = cachedPost ? cachedPost.preview : 'Loading preview...';
+        for (let index = 0; index < posts.length; index++) {
+            const post = posts[index];
+            const postResponse = await fetch(`${config.postsDirectory}${post.filename}`);
+            const content = await postResponse.text();
+            const preview = createPostPreview(content);
 
             const postElement = document.createElement('article');
             postElement.className = 'post-entry';
@@ -126,7 +95,7 @@ async function loadPostsList() {
             `;
 
             postsList.appendChild(postElement);
-        });
+        }
     } catch (error) {
         console.error('Error loading posts:', error);
         postsList.innerHTML = `
@@ -142,18 +111,12 @@ async function loadPost(filename) {
 
     try {
         postsList.innerHTML = '';
-        postContent.innerHTML = '<div class="loading fade-in">Loading...</div>';
 
-        let content;
-        if (postsCache.has(filename)) {
-            content = postsCache.get(filename).content;
-        } else {
-            const response = await fetch(`${config.postsDirectory}${filename}`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            content = await response.text();
-        }
+        const response = await fetch(`${config.postsDirectory}${filename}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const content = await response.text();
 
-        postContent.innerHTML = marked.parse(content);
+        postContent.innerHTML = DOMPurify.sanitize(marked.parse(content));
     } catch (error) {
         console.error('Error loading post:', error);
         postContent.innerHTML = `
@@ -169,7 +132,6 @@ async function loadPage(pageName) {
 
     try {
         postsList.innerHTML = '';
-        postContent.innerHTML = '<div class="loading fade-in">Loading...</div>';
 
         const response = await fetch(`${config.pagesDirectory}${pageName}.html`);
         if (!response.ok) throw new Error('Page not found');
@@ -187,14 +149,6 @@ async function loadPage(pageName) {
     }
 }
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-            console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch(error => {
-            console.log('Service Worker registration failed:', error);
-        });
-}
+const DOMPurify = window.DOMPurify;
 
 document.addEventListener('DOMContentLoaded', init);
