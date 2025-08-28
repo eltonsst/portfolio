@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          lfs: true
       - name: Set up Gleam
         uses: erlef/setup-beam@v1
         with:
@@ -26,12 +28,15 @@ jobs:
       - name: Install dependencies
         run: gleam deps download
       - name: Build app
-        run: gleam run -m lustre/dev build portfolio --minify
+        run: gleam run -m lustre/dev build app --minify
       - name: Copy output to dist
         run: |
           mkdir -p dist
           cp index.html dist/index.html
           cp -r priv dist/priv
+          # Copy any static assets including images
+          cp *.jpg dist/ 2>/dev/null || true
+          cp *.png dist/ 2>/dev/null || true
       - name: Update path in index.html to use minified app
         run: sed -i 's|priv/static/portfolio.mjs|priv/static/portfolio.min.mjs|' dist/index.html
       - name: Setup Pages
