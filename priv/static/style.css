@@ -1,0 +1,358 @@
+/* Your custom light mode color palette */
+:root {
+  /* Background colors - Light mode */
+  --bg-primary: #fbf1c7;
+  /* bg - Light cream background */
+  --bg-0-hard: #f9f5d7;
+  /* bg0_h - Hardest background */
+  --bg-0: #fbf1c7;
+  /* bg0 - Main background */
+  --bg-1: #ebdbb2;
+  /* bg1 - Slightly darker background */
+  --bg-2: #d5c4a1;
+  /* bg2 - Card/section backgrounds */
+  --bg-3: #bdae93;
+  /* bg3 - Border/separator color */
+  --bg-4: #a89984;
+  /* bg4 - Inactive elements */
+
+  /* Background colors - Dark mode (for future use) */
+  --bg-0-soft: #f2e5bc;
+  /* bg0_s - Soft background variant */
+
+  /* Foreground colors - Light mode */
+  --fg-0: #282828;
+  /* fg0 - Primary text color */
+  --fg-1: #3c3836;
+  /* fg1 - Secondary text */
+  --fg-2: #504945;
+  /* fg2 - Tertiary text - navigation, descriptions */
+  --fg-3: #665c54;
+  /* fg3 - Muted text */
+  --fg-4: #7c6f64;
+  /* fg4 - Most muted text */
+
+  /* Accent colors - Main palette */
+  --red: #cc241d;
+  /* red - Errors, alerts, danger */
+  --red-dark: #9d0006;
+  /* red (darker) - Dark red variant */
+  --green: #98971a;
+  /* green - Success, positive actions */
+  --green-dark: #79740e;
+  /* green (darker) - Dark green variant */
+  --yellow: #d79921;
+  /* yellow - Warnings, highlights */
+  --yellow-dark: #b57614;
+  /* yellow (darker) - Dark yellow variant */
+  --blue: #458588;
+  /* blue - Links, navigation, brand color */
+  --blue-dark: #076678;
+  /* blue (darker) - Dark blue variant */
+  --purple: #b16286;
+  /* purple - Special elements, accents */
+  --purple-dark: #8f3f71;
+  /* purple (darker) - Dark purple variant */
+  --aqua: #689d6a;
+  /* aqua - Info, secondary brand */
+  --aqua-dark: #427b58;
+  /* aqua (darker) - Dark aqua variant */
+  --orange: #d65d0e;
+  /* orange - Call-to-action, emphasis */
+  --orange-dark: #af3a03;
+  /* orange (darker) - Dark orange variant */
+  --gray: #928374;
+  /* gray - Neutral elements */
+}
+
+html {
+  font-size: 18px;
+  line-height: 23px;
+}
+
+body {
+  font-family: 'Palatino';
+  font-size: 1em;
+  line-height: 1.27777778em;
+  max-width: 740px;
+  margin: auto;
+  background-color: var(--bg-primary);
+  color: var(--fg-0);
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Responsive padding for different screen sizes */
+@media (min-width: 768px) {
+  body {
+    padding: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    padding: 2rem 1rem;
+  }
+}
+
+/* Content headings - NOT for the main title */
+h2 {
+  font-size: 2.61111111em;
+  line-height: 1.46808511em;
+  margin-top: 0.4893617em;
+  margin-bottom: 0.4893617em;
+  color: var(--fg-0);
+}
+
+h3 {
+  font-size: 1.61111111em;
+  line-height: 1.5862069em;
+  margin-top: 0.79310345em;
+  margin-bottom: 0em;
+  color: var(--blue);
+}
+
+h4,
+h5 {
+  font-size: 1em;
+  line-height: 1.27777778em;
+  margin-top: 1.27777778em;
+  margin-bottom: 0em;
+  color: var(--fg-0);
+}
+
+p,
+ul,
+ol,
+pre,
+table,
+blockquote {
+  margin-top: 0em;
+  margin-bottom: 1.27777778em;
+  color: var(--fg-0);
+}
+
+ul ul,
+ol ol,
+ul ol,
+ol ul {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+
+/* Alignment helpers */
+hr {
+  border: 1px solid;
+  border-color: var(--bg-3);
+}
+
+a,
+b,
+i,
+strong,
+em,
+small,
+code {
+  line-height: 0;
+}
+
+sub,
+sup {
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup {
+  top: -0.5em;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+/* Links using your palette */
+a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--blue-dark);
+  text-decoration: underline;
+}
+
+/* Header and navigation styles */
+header {
+  text-align: center;
+}
+
+header h1 {
+  display: inline;
+  color: var(--blue);
+  margin: 0;
+  font-size: 50px;
+  font-weight: bold;
+}
+
+/* Responsive font sizing to prevent overflow */
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 35px;
+  }
+}
+
+@media (max-width: 360px) {
+  header h1 {
+    font-size: 28px;
+  }
+}
+
+header h1 a {
+  color: var(--blue);
+}
+
+/* Navigation styling */
+nav.secondary-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem;
+}
+
+nav.secondary-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 2rem;
+}
+
+nav.secondary-nav li {
+  display: inline-block;
+  border-bottom: 2px solid transparent;
+}
+
+nav.secondary-nav li:hover {
+  border-bottom-color: var(--blue);
+}
+
+nav.secondary-nav a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+nav.secondary-nav a:hover {
+  color: var(--blue-dark);
+}
+
+/* Active navigation state */
+nav.secondary-nav li.active {
+  color: var(--blue);
+  border-bottom-color: var(--blue);
+}
+
+nav.secondary-nav li.active a {
+  color: var(--blue);
+}
+
+/* Article links */
+article a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+article a:hover {
+  color: var(--blue-dark);
+  text-decoration: underline;
+}
+
+.profile-image-content {
+  max-height: 500px;
+  max-width: 100%;
+  margin: 0 auto;
+  display: block;
+}
+
+main {
+  margin-top: 1em;
+}
+
+/* Last post highlighting */
+.last-post {
+  border: 2px dashed var(--orange);
+  padding: 1em;
+  margin: 1.27777778em 0;
+  background-color: var(--bg-0-soft);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.last-post:hover {
+  border-color: var(--orange-dark);
+  background-color: var(--bg-1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(213, 93, 14, 0.1);
+}
+
+.last-post::before {
+  content: "Latest";
+  position: absolute;
+  top: -12px;
+  left: 1em;
+  background-color: var(--orange);
+  color: var(--bg-primary);
+  padding: 0.25em 0.75em;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.last-post h3 {
+  color: var(--orange-dark);
+  margin-top: 0.63888889em;
+}
+
+.last-post a {
+  color: var(--orange);
+  font-weight: 500;
+}
+
+.last-post a:hover {
+  color: var(--orange-dark);
+}
+
+/* Footer styles */
+footer {
+  margin-top: 3rem;
+  padding: 2rem 0 1rem 0;
+  border-top: 1px solid var(--bg-3);
+  text-align: center;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 480px) {
+  footer {
+    margin-top: 2rem;
+    padding: 1.5rem 0 1rem 0;
+  }
+
+  .social-links {
+    gap: 1rem;
+  }
+
+  .social-links a {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+  }
+}

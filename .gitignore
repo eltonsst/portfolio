@@ -1,0 +1,12 @@
+build/
+*.beam
+*.ez
+.DS_Store
+node_modules/
+.env
+.env.local
+
+# Don't ignore images since we're using LFS
+# But ignore any temporary image files
+*~
+*.tmp
