@@ -209,17 +209,24 @@ fn link(target: Route, title: String) {
 }
 
 fn href(route: Route) {
+  let base_path = "/portfolio"
   let url = case route {
-    Index -> "/"
-    Posts -> "/posts"
-    PostById(post_id) -> "/post/" <> int.to_string(post_id)
-    NotFound(_) -> "/404"
+    Index -> base_path <> "/"
+    Posts -> base_path <> "/posts"
+    PostById(post_id) -> base_path <> "/post/" <> int.to_string(post_id)
+    NotFound(_) -> base_path <> "/404"
   }
   attribute.href(url)
 }
 
 fn parse_route(uri: Uri) {
-  case uri.path_segments(uri.path) {
+  // Remove the /portfolio base path for GitHub Pages
+  let segments = case uri.path_segments(uri.path) {
+    ["portfolio", ..rest] -> rest
+    segments -> segments
+  }
+
+  case segments {
     [] | [""] -> Index
     ["posts"] -> Posts
     ["post", post_id] ->
