@@ -10,3 +10,13 @@ node_modules/
 # But ignore any temporary image files
 *~
 *.tmp
+
+# Ignore auto-generated Lustre files but keep CSS
+priv/static/*.mjs
+priv/static/*.min.mjs
+priv/static/*.js
+priv/static/*.min.js
+
+# Keep manually created files
+!priv/static/*.css
+!priv/static/*.html
