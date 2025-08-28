@@ -37,8 +37,15 @@ jobs:
           # Copy any static assets including images
           cp *.jpg dist/ 2>/dev/null || true
           cp *.png dist/ 2>/dev/null || true
-      - name: Update path in index.html to use minified app
-        run: sed -i 's|priv/static/portfolio.mjs|priv/static/portfolio.min.mjs|' dist/index.html
+      - name: Update paths in index.html for GitHub Pages
+        run: |
+          # Update CSS path for GitHub Pages subpath
+          sed -i 's|href="/priv/static/|href="/portfolio/priv/static/|g' dist/index.html
+          # Update JS path for GitHub Pages subpath and use minified version
+          sed -i 's|src="/priv/static/portfolio.mjs"|src="/portfolio/priv/static/portfolio.min.mjs"|g' dist/index.html
+          # Show the updated file
+          echo "Updated index.html:"
+          cat dist/index.html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
