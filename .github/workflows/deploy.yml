@@ -29,6 +29,12 @@ jobs:
         run: gleam deps download
       - name: Build app
         run: gleam run -m lustre/dev build app --minify
+      - name: Debug build output
+        run: |
+          echo "Files in priv/static after build:"
+          ls -la priv/static/
+          echo "All files in priv directory:"
+          find priv -type f
       - name: Copy output to dist
         run: |
           mkdir -p dist
@@ -37,6 +43,8 @@ jobs:
           # Copy any static assets including images
           cp *.jpg dist/ 2>/dev/null || true
           cp *.png dist/ 2>/dev/null || true
+          echo "Files copied to dist:"
+          find dist -type f
       - name: Update paths in index.html for GitHub Pages
         run: |
           # Update CSS path for GitHub Pages subpath
