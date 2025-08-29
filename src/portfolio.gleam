@@ -81,7 +81,7 @@ fn view_index(model: Model) {
   let result_post = last_post(model.posts)
   [
     html.img([
-      attribute.src("/about.jpg"),
+      attribute.src("/priv/static/about.jpg"),
       attribute.alt("About me"),
       attribute.class("profile-image-content"),
     ]),
