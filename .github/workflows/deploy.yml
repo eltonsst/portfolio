@@ -46,10 +46,8 @@ jobs:
         run: |
           # Update image paths in the built JavaScript files for GitHub Pages subpath
           sed -i 's|"/priv/static/about\.jpg"|"/portfolio/priv/static/about.jpg"|g' dist/priv/static/portfolio.min.mjs
-          sed -i 's|"/priv/static/about\.jpg"|"/portfolio/priv/static/about.jpg"|g' dist/priv/static/portfolio.mjs
           # Update any other absolute paths in JavaScript that start with /priv/static/
           sed -i 's|"/priv/static/|"/portfolio/priv/static/|g' dist/priv/static/portfolio.min.mjs
-          sed -i 's|"/priv/static/|"/portfolio/priv/static/|g' dist/priv/static/portfolio.mjs
           # Update CSS path for GitHub Pages subpath
           sed -i 's|href="/priv/static/|href="/portfolio/priv/static/|g' dist/index.html
           # Update JS path for GitHub Pages subpath and use minified version
