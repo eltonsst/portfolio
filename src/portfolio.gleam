@@ -209,7 +209,7 @@ fn link(target: Route, title: String) {
 }
 
 fn href(route: Route) {
-  let base_path = "/portfolio"
+  let base_path = ""
   let url = case route {
     Index -> base_path <> "/"
     Posts -> base_path <> "/posts"
@@ -220,11 +220,8 @@ fn href(route: Route) {
 }
 
 fn parse_route(uri: Uri) {
-  // Remove the /portfolio base path for GitHub Pages
-  let segments = case uri.path_segments(uri.path) {
-    ["portfolio", ..rest] -> rest
-    segments -> segments
-  }
+  // Parse routes directly without base path since we're using custom domain
+  let segments = uri.path_segments(uri.path)
 
   case segments {
     [] | [""] -> Index
