@@ -40,25 +40,26 @@ fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
 }
 
 fn view(model: Model) -> Element(Msg) {
-  html.div([], [
-    html.header([], [
-      html.h1([], [
-        html.a([href(Index)], [html.text("<eltonsst>")]),
+  html.div([attribute.class("view")], [
+    html.div([], [
+      html.header([], [
+        html.nav([attribute.class("secondary-nav")], [
+          html.ul([], [
+            view_header_link(current: model.route, to: Index, label: "About"),
+            view_header_link(current: model.route, to: Posts, label: "Posts"),
+          ]),
+        ]),
       ]),
+      html.main([], {
+        case model.route {
+          Index -> view_index(model)
+          Posts -> view_posts(model)
+          PostById(post_id) -> view_post(model, post_id)
+          NotFound(_) -> view_not_found()
+        }
+      }),
     ]),
-    html.nav([attribute.class("secondary-nav")], [
-      html.ul([], [
-        view_header_link(current: model.route, to: Posts, label: "Posts"),
-      ]),
-    ]),
-    html.main([], {
-      case model.route {
-        Index -> view_index(model)
-        Posts -> view_posts(model)
-        PostById(post_id) -> view_post(model, post_id)
-        NotFound(_) -> view_not_found()
-      }
-    }),
+    view_footer(),
   ])
 }
 
@@ -107,7 +108,6 @@ fn view_index(model: Model) {
         ])
       Error(_) -> html.div([], [])
     },
-    view_footer(),
   ]
 }
 
@@ -124,14 +124,6 @@ fn view_footer() {
       ),
       html.a(
         [
-          attribute.href("https://linkedin.com/in/elton-stafa-bb802414a"),
-          attribute.target("_blank"),
-          attribute.rel("noopener noreferrer"),
-        ],
-        [html.text("LinkedIn")],
-      ),
-      html.a(
-        [
           attribute.href("https://x.com/eltonsst"),
           attribute.target("_blank"),
           attribute.rel("noopener noreferrer"),
@@ -140,11 +132,11 @@ fn view_footer() {
       ),
       html.a(
         [
-          attribute.href("https://instagram.com/eltonsst"),
+          attribute.href("https://linkedin.com/in/elton-stafa-bb802414a"),
           attribute.target("_blank"),
           attribute.rel("noopener noreferrer"),
         ],
-        [html.text("Instagram")],
+        [html.text("LinkedIn")],
       ),
     ]),
   ])

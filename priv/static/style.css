@@ -1,3 +1,10 @@
+/* CSS Reset and Box Model */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* Your custom light mode color palette */
 :root {
   /* Background colors - Light mode */
@@ -68,18 +75,19 @@
 html {
   font-size: 18px;
   line-height: 23px;
+  height: 100%;
 }
 
 body {
-  font-family: 'Palatino';
+  font-family: 'Palatino', 'Times New Roman', serif;
   font-size: 1em;
-  line-height: 1.27777778em;
+  line-height: 1.278em;
   max-width: 740px;
+  height: 100%;
   margin: auto;
   background-color: var(--bg-primary);
   color: var(--fg-0);
   padding: 1rem;
-  box-sizing: border-box;
 }
 
 /* Responsive padding for different screen sizes */
@@ -97,27 +105,27 @@ body {
 
 /* Content headings - NOT for the main title */
 h2 {
-  font-size: 2.61111111em;
-  line-height: 1.46808511em;
-  margin-top: 0.4893617em;
-  margin-bottom: 0.4893617em;
+  font-size: 2.611em;
+  line-height: 1.468em;
+  margin-top: 0.489em;
+  margin-bottom: 0.489em;
   color: var(--fg-0);
 }
 
 h3 {
-  font-size: 1.61111111em;
-  line-height: 1.5862069em;
-  margin-top: 0.79310345em;
-  margin-bottom: 0em;
+  font-size: 1.611em;
+  line-height: 1.586em;
+  margin-top: 0.793em;
+  margin-bottom: 0;
   color: var(--blue);
 }
 
 h4,
 h5 {
   font-size: 1em;
-  line-height: 1.27777778em;
-  margin-top: 1.27777778em;
-  margin-bottom: 0em;
+  line-height: 1.278em;
+  margin-top: 1.278em;
+  margin-bottom: 0;
   color: var(--fg-0);
 }
 
@@ -127,8 +135,8 @@ ol,
 pre,
 table,
 blockquote {
-  margin-top: 0em;
-  margin-bottom: 1.27777778em;
+  margin-top: 0;
+  margin-bottom: 1.278em;
   color: var(--fg-0);
 }
 
@@ -136,8 +144,8 @@ ul ul,
 ol ol,
 ul ol,
 ol ul {
-  margin-top: 0em;
-  margin-bottom: 0em;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 /* Alignment helpers */
@@ -182,6 +190,12 @@ a:hover {
   text-decoration: underline;
 }
 
+a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* Header and navigation styles */
 header {
   text-align: center;
@@ -191,25 +205,26 @@ header h1 {
   display: inline;
   color: var(--blue);
   margin: 0;
-  font-size: 50px;
+  font-size: 3.125rem;
   font-weight: bold;
 }
 
 /* Responsive font sizing to prevent overflow */
 @media (max-width: 480px) {
   header h1 {
-    font-size: 35px;
+    font-size: 2.188rem;
   }
 }
 
 @media (max-width: 360px) {
   header h1 {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 }
 
 header h1 a {
-  color: var(--blue);
+  color: inherit;
+  /* Inherit from parent h1 */
 }
 
 /* Navigation styling */
@@ -217,7 +232,7 @@ nav.secondary-nav {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 1rem;
+  margin: 0 1rem 1rem 1rem;
 }
 
 nav.secondary-nav ul {
@@ -237,18 +252,20 @@ nav.secondary-nav li:hover {
   border-bottom-color: var(--blue);
 }
 
-nav.secondary-nav a {
-  color: var(--blue);
-  text-decoration: none;
-}
-
 nav.secondary-nav a:hover {
   color: var(--blue-dark);
+  text-decoration: none;
+  /* Keep no underline for nav */
+}
+
+nav.secondary-nav a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* Active navigation state */
 nav.secondary-nav li.active {
-  color: var(--blue);
   border-bottom-color: var(--blue);
 }
 
@@ -256,21 +273,10 @@ nav.secondary-nav li.active a {
   color: var(--blue);
 }
 
-/* Article links */
-article a {
-  color: var(--blue);
-  text-decoration: none;
-}
-
-article a:hover {
-  color: var(--blue-dark);
-  text-decoration: underline;
-}
-
 .profile-image-content {
   max-height: 500px;
   max-width: 100%;
-  margin: 0 auto;
+  margin: 1em auto;
   display: block;
 }
 
@@ -282,7 +288,7 @@ main {
 .last-post {
   border: 2px dashed var(--orange);
   padding: 1em;
-  margin: 1.27777778em 0;
+  margin: 1.278em 0;
   background-color: var(--bg-0-soft);
   position: relative;
   transition: all 0.3s ease;
@@ -312,7 +318,7 @@ main {
 
 .last-post h3 {
   color: var(--orange-dark);
-  margin-top: 0.63888889em;
+  margin-top: 0.639em;
 }
 
 .last-post a {
@@ -350,9 +356,15 @@ footer {
   .social-links {
     gap: 1rem;
   }
+}
 
-  .social-links a {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.9rem;
-  }
+#app {
+  height: 100%;
+}
+
+.view {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 100%;
 }
